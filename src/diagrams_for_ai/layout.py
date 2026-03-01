@@ -36,12 +36,17 @@ def _effective(diagram: DiagramModel) -> tuple[int, int, int, int]:
     )
 
 
+def grid_center(row: int, col: int, diagram: DiagramModel) -> Point:
+    """Return the pixel center of a grid cell at (row, col)."""
+    cell_size, padding, _, _ = _effective(diagram)
+    x = padding + col * cell_size + cell_size / 2
+    y = padding + row * cell_size + cell_size / 2
+    return Point(x, y)
+
+
 def node_center(node: NodeModel, diagram: DiagramModel) -> Point:
     """Return the pixel center of a node's grid cell."""
-    cell_size, padding, _, _ = _effective(diagram)
-    x = padding + node.col * cell_size + cell_size / 2
-    y = padding + node.row * cell_size + cell_size / 2
-    return Point(x, y)
+    return grid_center(node.row, node.col, diagram)
 
 
 def node_icon_rect(node: NodeModel, diagram: DiagramModel) -> Rect:

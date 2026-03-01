@@ -88,6 +88,28 @@ end
 | `bg` | no | `"#E8F4FD"` | Background fill color (hex). |
 | `border` | no | `"#B0C4DE"` | Border stroke color (hex). |
 
+### `@edge` — waypoint routing
+
+Route a connection through intermediate grid cells. Reference the source and target by their Mermaid node IDs.
+
+```
+%% @edge A->B via=0,3;2,3
+A --> B
+```
+
+| Key | Required | Description |
+|-----|----------|-------------|
+| `via` | yes | Semicolon-separated `row,col` waypoints the connection passes through. |
+
+Multiple waypoints create a polyline with corners at each point:
+
+```
+%% @edge A->B via=0,3;2,3;2,0;3,0
+A --> B
+```
+
+The `@edge` annotation is independent of the Mermaid edge line — it only adds routing information. The edge direction, label, and style still come from the Mermaid syntax.
+
 ## Supported Mermaid syntax
 
 ### Graph header

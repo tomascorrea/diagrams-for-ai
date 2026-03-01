@@ -28,12 +28,10 @@ class ConnectionPath:
     @property
     def svg_path(self) -> str:
         """Return an SVG path data string for this connection."""
+        if self.segments:
+            return self._svg_polyline()
         if self.line_style == LineStyle.CURVED:
             return self._svg_cubic_bezier()
-        if self.line_style == LineStyle.ORTHO:
-            return self._svg_polyline()
-        if self.line_style == LineStyle.STEP:
-            return self._svg_polyline()
         return self._svg_straight()
 
     def _svg_straight(self) -> str:
@@ -59,6 +57,8 @@ class ConnectionPath:
 
     def sample_points(self, num_points: int = 50) -> list[Point]:
         """Sample points along the path for raster rendering."""
+        if self.segments:
+            return [self.start] + self.segments + [self.end]
         if self.line_style == LineStyle.CURVED and len(self.control_points) >= 2:
             return _sample_cubic_bezier(
                 self.start,
@@ -67,8 +67,6 @@ class ConnectionPath:
                 self.end,
                 num_points,
             )
-        if self.line_style in (LineStyle.ORTHO, LineStyle.STEP):
-            return [self.start] + self.segments + [self.end]
         return [self.start, self.end]
 
 
@@ -79,27 +77,34 @@ def compute_path(
     direction: Direction,
     *,
     arrow_size: float = 10.0,
+    via_points: list[Point] | None = None,
 ) -> ConnectionPath:
     """Compute a connection path between two points."""
-    builders = {
-        LineStyle.STRAIGHT: _build_straight,
-        LineStyle.CURVED: _build_curved,
-        LineStyle.ORTHO: _build_ortho,
-        LineStyle.STEP: _build_step,
-    }
-    builder = builders[line_style]
-    control_points, segments = builder(start, end)
+    if via_points:
+        control_points: list[Point] = []
+        segments = list(via_points)
+        effective_style = LineStyle.STRAIGHT
+    else:
+        builders = {
+            LineStyle.STRAIGHT: _build_straight,
+            LineStyle.CURVED: _build_curved,
+            LineStyle.ORTHO: _build_ortho,
+            LineStyle.STEP: _build_step,
+        }
+        builder = builders[line_style]
+        control_points, segments = builder(start, end)
+        effective_style = line_style
 
     arrow = None
     if direction in (Direction.FORWARD, Direction.BOTH):
         arrow = _compute_arrowhead(
-            start, end, control_points, segments, line_style, size=arrow_size
+            start, end, control_points, segments, effective_style, size=arrow_size
         )
 
     return ConnectionPath(
         start=start,
         end=end,
-        line_style=line_style,
+        line_style=effective_style,
         direction=direction,
         control_points=control_points,
         segments=segments,

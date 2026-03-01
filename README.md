@@ -12,7 +12,7 @@ diagrams-for-ai is a Python library that renders beautiful cloud architecture di
 - **Grid-based positioning** -- Place nodes with `row` and `col`. No fighting with Graphviz layout.
 - **AI-friendly** -- Explicit coordinates are easy for language models to produce and reason about.
 - **Real icons** -- Leverages the [diagrams](https://diagrams.mingrammer.com/) package for hundreds of icons across AWS, GCP, Azure, Kubernetes, and more.
-- **Beautiful connections** -- Four line styles: curved (bezier), straight, orthogonal, and step.
+- **Beautiful connections** -- Four line styles: curved (bezier), straight, orthogonal, and step. Use `via` waypoints for custom routing with any number of corners.
 - **SVG & PNG output** -- Portable SVG with embedded icons, or raster PNG via Pillow.
 - **Familiar syntax** -- Use `>>`, `<<`, and `-` operators to connect nodes, just like the original `diagrams` library.
 - **Hi-res rendering** -- Use `scale=2` (or higher) to uniformly multiply all pixel dimensions for sharp output on retina screens and in PDFs. Set `icon_size` per diagram for full control over icon proportions.
@@ -83,6 +83,14 @@ with Diagram("AWS Web Service", rows=5, cols=7, outformat=["svg", "png"], show=F
 
 ```python
 a >> Edge(label="HTTPS", color="#2ECC71", style="dashed") >> b
+```
+
+### Waypoint routing
+
+Route connections through intermediate grid cells with `via`:
+
+```python
+a >> Edge(via=[(0, 3), (2, 3)]) >> b
 ```
 
 ### Clusters

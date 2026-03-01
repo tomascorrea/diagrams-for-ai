@@ -3,6 +3,7 @@ import pytest
 from diagrams_for_ai.layout import (
     Point,
     cluster_rect,
+    grid_center,
     node_center,
     node_connection_point,
     node_icon_rect,
@@ -161,3 +162,26 @@ def test_icon_size_and_scale_combine():
     rect = node_icon_rect(node, d)
     assert rect.width == 160
     assert rect.height == 160
+
+
+# ---------------------------------------------------------------------------
+# grid_center
+# ---------------------------------------------------------------------------
+
+
+def test_grid_center_matches_node_center(diagram, origin_node, offset_node):
+    assert grid_center(0, 0, diagram) == node_center(origin_node, diagram)
+    assert grid_center(2, 3, diagram) == node_center(offset_node, diagram)
+
+
+def test_grid_center_at_origin(diagram):
+    center = grid_center(0, 0, diagram)
+    assert center.x == 60 + 90
+    assert center.y == 60 + 90
+
+
+def test_grid_center_scales(diagram, diagram_2x):
+    c1 = grid_center(1, 2, diagram)
+    c2 = grid_center(1, 2, diagram_2x)
+    assert abs(c2.x - c1.x * 2) < 0.01
+    assert abs(c2.y - c1.y * 2) < 0.01

@@ -36,6 +36,7 @@ class EdgeModel:
     style: str = ""
     line_style: LineStyle = LineStyle.CURVED
     direction: Direction = Direction.FORWARD
+    via: list[tuple[int, int]] = field(default_factory=list)
 
 
 @dataclass

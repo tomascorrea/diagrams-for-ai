@@ -461,3 +461,52 @@ def test_full_aws_style_diagram():
     assert private.row == 2
     assert private.width == 7
     assert private.height == 3
+
+
+# ---------------------------------------------------------------------------
+# @edge annotation (via waypoints)
+# ---------------------------------------------------------------------------
+
+
+def test_edge_via_single_waypoint():
+    model = parse_mermaid(textwrap.dedent("""\
+        graph TD
+            %% @node A pos=0,0
+            %% @node B pos=2,2
+            %% @edge A->B via=0,2
+            A[Start] --> B[End]
+    """))
+    assert len(model.edges) == 1
+    assert model.edges[0].via == [(0, 2)]
+
+
+def test_edge_via_multiple_waypoints():
+    model = parse_mermaid(textwrap.dedent("""\
+        graph TD
+            %% @node A pos=0,0
+            %% @node B pos=3,3
+            %% @edge A->B via=0,3;2,3;2,0;3,0
+            A[Start] --> B[End]
+    """))
+    assert model.edges[0].via == [(0, 3), (2, 3), (2, 0), (3, 0)]
+
+
+def test_edge_without_annotation_has_empty_via():
+    model = parse_mermaid(textwrap.dedent("""\
+        graph TD
+            %% @node A pos=0,0
+            %% @node B pos=1,0
+            A[Start] --> B[End]
+    """))
+    assert model.edges[0].via == []
+
+
+def test_edge_via_malformed_raises():
+    with pytest.raises(ValueError, match="row,col"):
+        parse_mermaid(textwrap.dedent("""\
+            graph TD
+                %% @node A pos=0,0
+                %% @node B pos=1,0
+                %% @edge A->B via=bad
+                A --> B
+        """))

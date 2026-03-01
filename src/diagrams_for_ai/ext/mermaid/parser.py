@@ -21,6 +21,7 @@ from diagrams_for_ai.model import (
 _RE_CONFIG = re.compile(r"^%%\s*@config\s+(.+)$")
 _RE_NODE_ANNOTATION = re.compile(r"^%%\s*@node\s+(\S+)\s+(.+)$")
 _RE_CLUSTER_ANNOTATION = re.compile(r"^%%\s*@cluster\s+(.+)$")
+_RE_EDGE_ANNOTATION = re.compile(r"^%%\s*@edge\s+(\w+)->(\w+)\s+(.+)$")
 
 # ---------------------------------------------------------------------------
 # Mermaid structural patterns
@@ -187,6 +188,21 @@ def _parse_cluster_annotation(kv_text: str) -> _ClusterAnnotation:
     )
 
 
+def _parse_edge_annotation(kv_text: str) -> list[tuple[int, int]]:
+    """Parse the via waypoints from an @edge annotation."""
+    kv = _parse_kv(kv_text)
+    via_str = kv.get("via", "")
+    if not via_str:
+        return []
+    waypoints: list[tuple[int, int]] = []
+    for pair in via_str.split(";"):
+        parts = pair.strip().split(",")
+        if len(parts) != 2:
+            raise ValueError(f"@edge via must be semicolon-separated row,col pairs — got '{pair}'")
+        waypoints.append((int(parts[0]), int(parts[1])))
+    return waypoints
+
+
 def _arrow_to_direction_style(arrow: str) -> tuple[Direction, str]:
     for pattern, direction, style in _ARROW_SPECS:
         if re.fullmatch(pattern if "." in pattern else re.escape(pattern), arrow):
@@ -268,6 +284,7 @@ def parse_mermaid(text: str) -> DiagramModel:
     config = _ConfigAnnotation()
     node_annotations: dict[str, _NodeAnnotation] = {}
     cluster_annotations: dict[str, _ClusterAnnotation] = {}
+    edge_annotations: dict[tuple[str, str], list[tuple[int, int]]] = {}
 
     known_labels: dict[str, str] = {}
     known_nodes: set[str] = set()
@@ -308,6 +325,12 @@ def parse_mermaid(text: str) -> DiagramModel:
                     m.group(1)
                 )
                 pending_cluster_id = None
+            continue
+
+        m = _RE_EDGE_ANNOTATION.match(line)
+        if m:
+            src_id, tgt_id, kv_text = m.group(1), m.group(2), m.group(3)
+            edge_annotations[(src_id, tgt_id)] = _parse_edge_annotation(kv_text)
             continue
 
         # Skip other comments
@@ -408,6 +431,7 @@ def parse_mermaid(text: str) -> DiagramModel:
     # Build edges
     edges: list[EdgeModel] = []
     for src, tgt, label, direction, style in raw_edges:
+        via = edge_annotations.get((src, tgt), [])
         edges.append(
             EdgeModel(
                 source_id=id_map[src],
@@ -415,6 +439,7 @@ def parse_mermaid(text: str) -> DiagramModel:
                 label=label,
                 style=style,
                 direction=direction,
+                via=via,
             )
         )
 
