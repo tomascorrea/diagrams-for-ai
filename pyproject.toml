@@ -1,6 +1,6 @@
 [project]
 name = "diagrams-for-ai"
-version = "0.0.1"
+version = "0.1.0"
 description = "AI-friendly architecture diagrams with grid-based positioning"
 readme = "README.md"
 authors = [
