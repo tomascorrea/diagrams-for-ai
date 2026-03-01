@@ -33,6 +33,40 @@ with Diagram(
 | `show` | `bool` | `True` | Whether to open the rendered file in the system viewer. |
 | `bg_color` | `str` | `"#FFFFFF"` | Canvas background color (hex). |
 
+### `Diagram.from_mermaid(text, *, outformat, show, filename)`
+
+Create a `Diagram` by parsing annotated Mermaid flowchart text. Returns a `Diagram` instance — call `.render()` to produce output files.
+
+```python
+d = Diagram.from_mermaid("""\
+    %% @config name="My Arch" rows=3 cols=4
+    graph TD
+        %% @node A pos=0,0 icon=aws/compute/ec2
+        %% @node B pos=1,1 icon=aws/database/rds
+        A[EC2] --> B[RDS]
+""", outformat="svg", show=False)
+
+d.render()
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `text` | `str` | — | Annotated Mermaid flowchart text. |
+| `outformat` | `str \| list[str]` | `"png"` | Output format(s). |
+| `show` | `bool` | `True` | Whether to open the file after rendering. |
+| `filename` | `str` | `""` | Override the output filename. |
+
+### `Diagram.from_mermaid_file(path, *, outformat, show, filename)`
+
+Same as `from_mermaid`, but reads the Mermaid text from a `.mmd` file.
+
+```python
+d = Diagram.from_mermaid_file("architecture.mmd", show=False)
+d.render()
+```
+
+See [Mermaid Import](mermaid-import.md) for the full annotation syntax reference.
+
 ---
 
 ## Node

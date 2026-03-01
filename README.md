@@ -15,6 +15,7 @@ diagrams-for-ai is a Python library that renders beautiful cloud architecture di
 - **Beautiful connections** -- Four line styles: curved (bezier), straight, orthogonal, and step.
 - **SVG & PNG output** -- Portable SVG with embedded icons, or raster PNG via Pillow.
 - **Familiar syntax** -- Use `>>`, `<<`, and `-` operators to connect nodes, just like the original `diagrams` library.
+- **Mermaid import** -- Parse annotated Mermaid flowcharts (`.mmd` files) into diagrams. Grid positions and icons are embedded as Mermaid comments, so the same file renders in GitHub, IDEs, and diagrams-for-ai.
 
 ## Installation
 
@@ -91,6 +92,29 @@ with Cluster("VPC", row=0, col=0, width=4, height=3,
     # nodes inside the cluster
     ...
 ```
+
+### Mermaid import
+
+Write your architecture in Mermaid with position annotations in comments:
+
+```mermaid
+%% @config name="Hello" rows=2 cols=2
+graph TD
+    %% @node A pos=0,0 icon=aws/compute/ec2
+    %% @node B pos=1,1 icon=aws/database/rds
+    A[Service A] --> B[Service B]
+```
+
+Then render it with diagrams-for-ai:
+
+```python
+from diagrams_for_ai import Diagram
+
+d = Diagram.from_mermaid_file("architecture.mmd", show=False)
+d.render()
+```
+
+See [Mermaid Import docs](docs/mermaid-import.md) for the full annotation syntax.
 
 ### Icon providers
 
