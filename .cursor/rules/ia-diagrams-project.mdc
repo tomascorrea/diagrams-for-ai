@@ -1,0 +1,33 @@
+---
+description: diagrams_for_ai project conventions and architecture
+alwaysApply: true
+---
+
+# diagrams_for_ai Project
+
+Python library for AI-friendly architecture diagrams with explicit grid-based positioning.
+
+## Architecture
+
+- Grid-based node positioning (row, col) -- no auto-layout, no Graphviz
+- Icons sourced from the `diagrams` package (dependency, not bundled)
+- SVG rendered via raw XML generation with base64-embedded icons
+- PNG rendered via Pillow
+- Connection paths: straight, curved (bezier), orthogonal, step
+
+## Conventions
+
+- Use `uv` for dependency management (`uv add`, `uv run`)
+- Use dataclasses for models, NEVER pydantic
+- Keep rendering logic out of model classes
+- Avoid imports inside functions or methods
+- Follow the Zen of Python: simple, explicit, readable
+
+## Testing
+
+- Use pytest with `uv run pytest`
+- NEVER use class-based test cases (no `unittest.TestCase`, no `class Test...`)
+- Write plain `def test_...()` functions
+- Use pytest fixtures (`@pytest.fixture`) for reusable setup and shared objects
+- Avoid mocks unless absolutely necessary; test with real rendering
+- Place tests in `tests/` directory, one file per module (e.g. `test_icons.py`, `test_layout.py`)

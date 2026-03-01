@@ -1,0 +1,31 @@
+[project]
+name = "diagrams-for-ai"
+version = "0.1.0"
+description = "AI-friendly architecture diagrams with grid-based positioning"
+readme = "README.md"
+authors = [
+    { name = "Tomas Correa", email = "tomas.correa@gmail.com" }
+]
+requires-python = ">=3.12"
+license = {file = "LICENSE"}
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Multimedia :: Graphics",
+]
+dependencies = [
+    "diagrams>=0.25.1",
+    "pillow>=12.1.1",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.27,<0.10.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "mkdocs-material>=9.7.3",
+    "pytest>=9.0.2",
+]
