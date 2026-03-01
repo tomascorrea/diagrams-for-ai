@@ -1,6 +1,6 @@
 ---
 name: feature-dev-workflow
-description: Guides AI through a structured feature development lifecycle with planning, branching, building, committing, and pull requests. Use when the user wants to start a new feature, build something new, or asks to follow the dev workflow.
+description: Guides AI through a structured feature development lifecycle with planning, branching, building, committing, pull requests, and releases. Use when the user wants to start a new feature, build something new, create a release, or asks to follow the dev workflow.
 ---
 
 # Feature Development Workflow
@@ -146,12 +146,55 @@ EOF
 ### After PR creation
 
 - Share the PR URL with the user
-- The workflow is complete
+- The feature workflow is complete unless the user requests a release
+
+## Phase 6: Release (optional, on user request)
+
+**Goal**: Publish a new version to PyPI by creating a GitHub Release.
+
+This phase is **only triggered when the user explicitly asks** to create a release. It can happen immediately after a PR merge or at any later point.
+
+### Prerequisites
+
+- You must be on `main` with a clean working tree
+- The PR must already be merged
+
+### Steps
+
+1. **Switch to main and pull latest**:
+   ```bash
+   git checkout main
+   git pull origin main
+   ```
+
+2. **Bump the version** in `pyproject.toml`:
+   - Ask the user what the new version should be (e.g. `0.2.0`, `1.0.0`)
+   - Update the `version` field in `[project]`
+   - Follow semver: breaking changes = major, new features = minor, fixes = patch
+
+3. **Commit and push the version bump**:
+   ```bash
+   git add pyproject.toml
+   git commit -m "Bump version to <version>"
+   git push origin main
+   ```
+
+4. **Create the GitHub Release** using `gh`:
+   ```bash
+   gh release create v<version> --title "v<version>" --generate-notes
+   ```
+   - Always prefix the tag with `v` (e.g. `v0.2.0`)
+   - `--generate-notes` auto-generates release notes from merged PRs
+   - This triggers the `publish.yml` workflow which builds and publishes to PyPI via OIDC
+
+5. **Verify the publish**:
+   - Share the release URL with the user
+   - Remind them to check https://pypi.org/project/diagrams-for-ai/ after a minute or two
 
 ## Phase Transitions Summary
 
 ```
-Idea --> Plan (no code!) --> Branch --> Build/Commit loop --> Tests + Docs --> PR
+Idea --> Plan (no code!) --> Branch --> Build/Commit loop --> Tests + Docs --> PR --> Release (optional)
 ```
 
 Only move forward when the current phase is fully complete. If something fails (tests, lints), fix it in the current phase before advancing.
