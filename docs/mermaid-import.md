@@ -47,7 +47,15 @@ Place at the top of the file, before the `graph` declaration.
 | `cols` | `int` | auto-computed | Grid columns. If omitted, derived from node positions. |
 | `cell_size` | `int` | `180` | Pixel size of each grid cell. |
 | `padding` | `int` | `60` | Pixel padding around the canvas. |
+| `icon_size` | `int` | `64` | Base icon size in pixels. |
+| `scale` | `int` | `1` | Uniform scale multiplier for hi-res output (e.g. `scale=2` doubles all dimensions). |
 | `bg` | `str` | `"#FFFFFF"` | Canvas background color (hex). |
+
+**Hi-res example:**
+
+```
+%% @config name="Hi-Res Diagram" rows=3 cols=3 cell_size=180 scale=2
+```
 
 ### `@node` — node positions and icons
 

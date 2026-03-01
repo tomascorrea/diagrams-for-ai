@@ -117,6 +117,8 @@ class _ConfigAnnotation:
     cols: int = 0
     cell_size: int = 180
     padding: int = 60
+    icon_size: int = 64
+    scale: int = 1
     bg: str = "#FFFFFF"
 
 
@@ -140,6 +142,8 @@ def _parse_config(text: str) -> _ConfigAnnotation:
         cols=int(kv["cols"]) if "cols" in kv else 0,
         cell_size=int(kv["cell_size"]) if "cell_size" in kv else 180,
         padding=int(kv["padding"]) if "padding" in kv else 60,
+        icon_size=int(kv["icon_size"]) if "icon_size" in kv else 64,
+        scale=int(kv["scale"]) if "scale" in kv else 1,
         bg=kv.get("bg", "#FFFFFF"),
     )
 
@@ -437,6 +441,8 @@ def parse_mermaid(text: str) -> DiagramModel:
         cols=cols,
         cell_size=config.cell_size,
         padding=config.padding,
+        icon_size=config.icon_size,
+        scale=config.scale,
         nodes=nodes,
         edges=edges,
         clusters=clusters,

@@ -21,32 +21,46 @@ class Rect:
         return Point(self.x + self.width / 2, self.y + self.height / 2)
 
 
-ICON_SIZE = 64
-LABEL_HEIGHT = 24
+DEFAULT_ICON_SIZE = 64
+DEFAULT_LABEL_HEIGHT = 24
+
+
+def _effective(diagram: DiagramModel) -> tuple[int, int, int, int]:
+    """Return (cell_size, padding, icon_size, label_height) scaled by diagram.scale."""
+    s = diagram.scale
+    return (
+        diagram.cell_size * s,
+        diagram.padding * s,
+        diagram.icon_size * s,
+        DEFAULT_LABEL_HEIGHT * s,
+    )
 
 
 def node_center(node: NodeModel, diagram: DiagramModel) -> Point:
     """Return the pixel center of a node's grid cell."""
-    x = diagram.padding + node.col * diagram.cell_size + diagram.cell_size / 2
-    y = diagram.padding + node.row * diagram.cell_size + diagram.cell_size / 2
+    cell_size, padding, _, _ = _effective(diagram)
+    x = padding + node.col * cell_size + cell_size / 2
+    y = padding + node.row * cell_size + cell_size / 2
     return Point(x, y)
 
 
 def node_icon_rect(node: NodeModel, diagram: DiagramModel) -> Rect:
     """Return the bounding rect for a node's icon (centered in its cell)."""
+    _, _, icon_size, label_height = _effective(diagram)
     center = node_center(node, diagram)
     return Rect(
-        x=center.x - ICON_SIZE / 2,
-        y=center.y - ICON_SIZE / 2 - LABEL_HEIGHT / 2,
-        width=ICON_SIZE,
-        height=ICON_SIZE,
+        x=center.x - icon_size / 2,
+        y=center.y - icon_size / 2 - label_height / 2,
+        width=icon_size,
+        height=icon_size,
     )
 
 
 def node_label_position(node: NodeModel, diagram: DiagramModel) -> Point:
     """Return the position for drawing a node's label (centered below the icon)."""
+    _, _, icon_size, label_height = _effective(diagram)
     center = node_center(node, diagram)
-    return Point(center.x, center.y + ICON_SIZE / 2 + LABEL_HEIGHT / 2)
+    return Point(center.x, center.y + icon_size / 2 + label_height / 2)
 
 
 def node_connection_point(
@@ -77,9 +91,10 @@ def node_connection_point(
 
 def cluster_rect(cluster: ClusterModel, diagram: DiagramModel) -> Rect:
     """Return the pixel bounding rect for a cluster."""
-    margin = 16
-    x = diagram.padding + cluster.col * diagram.cell_size - margin
-    y = diagram.padding + cluster.row * diagram.cell_size - margin
-    width = cluster.width * diagram.cell_size + 2 * margin
-    height = cluster.height * diagram.cell_size + 2 * margin
+    cell_size, padding, _, _ = _effective(diagram)
+    margin = 16 * diagram.scale
+    x = padding + cluster.col * cell_size - margin
+    y = padding + cluster.row * cell_size - margin
+    width = cluster.width * cell_size + 2 * margin
+    height = cluster.height * cell_size + 2 * margin
     return Rect(x, y, width, height)
