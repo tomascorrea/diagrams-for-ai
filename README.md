@@ -1,5 +1,8 @@
 # diagrams-for-ai
 
+[![CI](https://github.com/tomascorrea/diagrams-for-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/tomascorrea/diagrams-for-ai/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/diagrams-for-ai)](https://pypi.org/project/diagrams-for-ai/)
+
 **AI-friendly architecture diagrams with grid-based positioning.**
 
 diagrams-for-ai is a Python library that renders beautiful cloud architecture diagrams without Graphviz. Nodes are placed on a simple grid using `row` and `col` coordinates, making it trivial for an AI to generate diagrams programmatically.
