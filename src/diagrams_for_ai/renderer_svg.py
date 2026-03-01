@@ -3,6 +3,7 @@ from xml.sax.saxutils import escape
 from diagrams_for_ai.icons import load_icon_base64
 from diagrams_for_ai.layout import (
     cluster_rect,
+    grid_center,
     node_center,
     node_connection_point,
     node_icon_rect,
@@ -82,13 +83,20 @@ def _render_edge_svg(parts, edge, diagram, font_size, stroke_width, arrow_size):
     if not src or not tgt:
         return
 
+    via_points = [grid_center(r, c, diagram) for r, c in edge.via]
+
     src_center = node_center(src, diagram)
     tgt_center = node_center(tgt, diagram)
+    exit_toward = via_points[0] if via_points else tgt_center
+    enter_from = via_points[-1] if via_points else src_center
 
-    start = node_connection_point(src, diagram, tgt_center)
-    end = node_connection_point(tgt, diagram, src_center)
+    start = node_connection_point(src, diagram, exit_toward)
+    end = node_connection_point(tgt, diagram, enter_from)
 
-    path = compute_path(start, end, edge.line_style, edge.direction, arrow_size=arrow_size)
+    path = compute_path(
+        start, end, edge.line_style, edge.direction,
+        arrow_size=arrow_size, via_points=via_points,
+    )
 
     color = edge.color or "#495057"
     s = diagram.scale

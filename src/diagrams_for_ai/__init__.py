@@ -141,6 +141,7 @@ class Diagram:
                     style=edge.style,
                     line_style=edge.line_style,
                     direction=edge.direction,
+                    via=edge.via,
                 )
             )
         self._edges_pending.clear()
@@ -283,11 +284,13 @@ class Edge:
         color: str = "",
         style: str = "",
         line_style: LineStyle = LineStyle.CURVED,
+        via: list[tuple[int, int]] | None = None,
     ):
         self.label = label
         self.color = color
         self.style = style
         self.line_style = line_style
+        self.via: list[tuple[int, int]] = via or []
         self.direction = Direction.FORWARD
         self._source: Optional[Node] = None
 
@@ -329,6 +332,7 @@ class Edge:
             color=self.color,
             style=self.style,
             line_style=self.line_style,
+            via=list(self.via),
         )
 
 

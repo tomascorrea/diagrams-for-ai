@@ -133,6 +133,25 @@ node1 >> Edge(label="HTTPS", color="#2ECC71", style="dashed", line_style=LineSty
 | `color` | `str` | `""` | Line color (hex). Defaults to `"#495057"` if empty. |
 | `style` | `str` | `""` | Line dash style: `""` (solid), `"dashed"`, or `"dotted"`. |
 | `line_style` | `LineStyle` | `LineStyle.CURVED` | Path shape. See [Connection Styles](connection-styles.md). |
+| `via` | `list[tuple[int, int]]` | `[]` | Waypoint grid positions `(row, col)` for the connection to pass through. Creates a polyline with corners at each waypoint. |
+
+### Waypoint routing
+
+Use `via` to route a connection through intermediate grid cells, creating as many corners as needed:
+
+```python
+a >> Edge(via=[(0, 2), (2, 2)]) >> b
+```
+
+This routes the connection from `a` through grid cell `(0, 2)`, then `(2, 2)`, and finally to `b`. The source node exits toward the first waypoint, and the target is approached from the last waypoint.
+
+```python
+# L-shaped route: go right, then down
+a >> Edge(via=[(0, 3)]) >> b
+
+# U-shaped route around an obstacle
+a >> Edge(via=[(0, 4), (2, 4), (2, 0)]) >> b
+```
 
 ---
 

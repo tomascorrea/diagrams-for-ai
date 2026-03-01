@@ -126,3 +126,44 @@ def test_all_line_styles_render(output_dir):
     with open(filepath + ".svg") as f:
         content = f.read()
     assert content.count("<path") >= 4
+
+
+def test_edge_via_renders_svg(output_dir):
+    filepath = os.path.join(output_dir, "via_svg")
+    with Diagram("Via", filename=filepath, rows=3, cols=3, outformat="svg", show=False):
+        a = Node("A", icon="aws/compute/ec2", row=0, col=0)
+        b = Node("B", icon="aws/compute/ec2", row=2, col=2)
+        a >> Edge(via=[(0, 2), (2, 2)]) >> b
+
+    svg_path = filepath + ".svg"
+    assert os.path.isfile(svg_path)
+    with open(svg_path) as f:
+        content = f.read()
+    assert "<path" in content
+
+
+def test_edge_via_renders_png(output_dir):
+    filepath = os.path.join(output_dir, "via_png")
+    with Diagram("Via", filename=filepath, rows=3, cols=3, outformat="png", show=False):
+        a = Node("A", icon="aws/compute/ec2", row=0, col=0)
+        b = Node("B", icon="aws/compute/ec2", row=2, col=2)
+        a >> Edge(via=[(0, 2)]) >> b
+
+    png_path = filepath + ".png"
+    assert os.path.isfile(png_path)
+    img = Image.open(png_path)
+    assert img.size[0] > 0
+
+
+def test_edge_via_multiple_waypoints_svg(output_dir):
+    filepath = os.path.join(output_dir, "via_multi")
+    with Diagram("Via Multi", filename=filepath, rows=4, cols=4, outformat="svg", show=False):
+        a = Node("A", icon="aws/compute/ec2", row=0, col=0)
+        b = Node("B", icon="aws/compute/ec2", row=3, col=3)
+        a >> Edge(via=[(0, 3), (1, 3), (1, 0), (3, 0)]) >> b
+
+    with open(filepath + ".svg") as f:
+        content = f.read()
+    assert "<path" in content
+    path_count = content.count("L ")
+    assert path_count >= 4
