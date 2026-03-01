@@ -216,7 +216,7 @@ def _extract_edges(
         edges.append((src, tgt, label.strip(), direction, style))
         known_nodes.add(src)
         known_nodes.add(tgt)
-        remaining = line[:m.start()] + line[m.end():]
+        remaining = line[:m.start()] + tgt + line[m.end():]
         edges.extend(_extract_edges(remaining, known_nodes))
         return edges
 
@@ -227,7 +227,7 @@ def _extract_edges(
         edges.append((src, tgt, label.strip(), direction, style))
         known_nodes.add(src)
         known_nodes.add(tgt)
-        remaining = line[:m.start()] + line[m.end():]
+        remaining = line[:m.start()] + tgt + line[m.end():]
         edges.extend(_extract_edges(remaining, known_nodes))
         return edges
 
@@ -238,7 +238,7 @@ def _extract_edges(
         edges.append((src, tgt, "", direction, style))
         known_nodes.add(src)
         known_nodes.add(tgt)
-        remaining = line[:m.start()] + line[m.end():]
+        remaining = line[:m.start()] + tgt + line[m.end():]
         edges.extend(_extract_edges(remaining, known_nodes))
         return edges
 
