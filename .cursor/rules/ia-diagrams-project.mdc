@@ -23,6 +23,12 @@ Python library for AI-friendly architecture diagrams with explicit grid-based po
 - Avoid imports inside functions or methods
 - Follow the Zen of Python: simple, explicit, readable
 
+## Workflow
+
+- Before finishing any issue, update `README.md` and `docs/` to reflect the changes
+- If a new feature is added, document it in the relevant docs page and add an example
+- If the API changes, update `docs/api.md` and the README's feature summary
+
 ## Testing
 
 - Use pytest with `uv run pytest`
