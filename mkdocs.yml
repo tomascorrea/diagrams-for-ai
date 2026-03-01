@@ -1,6 +1,6 @@
 site_name: diagrams-for-ai
 site_description: AI-friendly architecture diagrams with grid-based positioning
-repo_url: https://github.com/your-org/diagrams-for-ai
+repo_url: https://github.com/tomascorrea/diagrams-for-ai
 
 theme:
   name: material
