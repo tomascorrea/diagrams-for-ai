@@ -13,6 +13,7 @@ from diagrams_for_ai.model import (
     LineStyle,
     NodeModel,
 )
+from diagrams_for_ai.ext.mermaid import parse_mermaid
 from diagrams_for_ai.renderer_png import render_png
 from diagrams_for_ai.renderer_svg import render_svg
 
@@ -66,6 +67,50 @@ class Diagram:
             outformat = [outformat]
         self._outformats = outformat
         self._edges_pending: list[tuple["Node", "Node", "Edge"]] = []
+
+    @classmethod
+    def from_mermaid(
+        cls,
+        text: str,
+        *,
+        outformat: Union[str, list[str]] = "png",
+        show: bool = True,
+        filename: str = "",
+    ) -> "Diagram":
+        """Create a Diagram by parsing annotated Mermaid flowchart text.
+
+        The Mermaid text should contain ``%% @node`` annotations with grid
+        positions.  Call ``.render()`` on the returned instance to produce
+        output files.
+        """
+        model = parse_mermaid(text)
+        if filename:
+            model.filename = filename
+        model.show = show
+        instance = cls.__new__(cls)
+        instance._model = model
+        instance._outformats = [outformat] if isinstance(outformat, str) else outformat
+        instance._edges_pending = []
+        return instance
+
+    @classmethod
+    def from_mermaid_file(
+        cls,
+        path: str,
+        *,
+        outformat: Union[str, list[str]] = "png",
+        show: bool = True,
+        filename: str = "",
+    ) -> "Diagram":
+        """Create a Diagram from an annotated Mermaid ``.mmd`` file.
+
+        Reads the file at *path* and delegates to :meth:`from_mermaid`.
+        """
+        with open(path) as f:
+            text = f.read()
+        return cls.from_mermaid(
+            text, outformat=outformat, show=show, filename=filename
+        )
 
     @property
     def model(self) -> DiagramModel:
