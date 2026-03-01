@@ -15,6 +15,7 @@ diagrams-for-ai is a Python library that renders beautiful cloud architecture di
 - **Beautiful connections** -- Four line styles: curved (bezier), straight, orthogonal, and step.
 - **SVG & PNG output** -- Portable SVG with embedded icons, or raster PNG via Pillow.
 - **Familiar syntax** -- Use `>>`, `<<`, and `-` operators to connect nodes, just like the original `diagrams` library.
+- **Hi-res rendering** -- Use `scale=2` (or higher) to uniformly multiply all pixel dimensions for sharp output on retina screens and in PDFs. Set `icon_size` per diagram for full control over icon proportions.
 - **Mermaid import** -- Parse annotated Mermaid flowcharts (`.mmd` files) into diagrams. Grid positions and icons are embedded as Mermaid comments, so the same file renders in GitHub, IDEs, and diagrams-for-ai.
 
 ## Installation
@@ -115,6 +116,30 @@ d.render()
 ```
 
 See [Mermaid Import docs](docs/mermaid-import.md) for the full annotation syntax.
+
+### Hi-res rendering
+
+Use `scale` for sharper output in PDFs, print, or retina displays:
+
+```python
+with Diagram("Hi-Res", rows=2, cols=2, scale=2, outformat="png", show=False):
+    a = Node("Service A", icon="aws/compute/ec2", row=0, col=0)
+    b = Node("Service B", icon="aws/database/rds", row=1, col=1)
+    a >> b
+```
+
+Or in Mermaid:
+
+```
+%% @config name="Hi-Res" rows=2 cols=2 scale=2
+```
+
+Set `icon_size` to control the base icon size per diagram (default 64px):
+
+```python
+with Diagram("Large Icons", rows=2, cols=2, icon_size=80, outformat="png", show=False):
+    ...
+```
 
 ### Icon providers
 

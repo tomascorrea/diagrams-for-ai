@@ -14,6 +14,8 @@ with Diagram(
     cols=6,                    # grid columns
     cell_size=180,             # pixel size of each grid cell
     padding=60,                # pixel padding around the canvas
+    icon_size=64,              # base icon size in pixels
+    scale=1,                   # uniform scale multiplier for hi-res output
     outformat="png",           # "png", "svg", "jpg", or a list like ["svg", "png"]
     show=True,                 # open the file after rendering
     bg_color="#FFFFFF",        # canvas background color
@@ -29,9 +31,22 @@ with Diagram(
 | `cols` | `int` | `6` | Number of columns in the grid. |
 | `cell_size` | `int` | `180` | Pixel size of each grid cell. |
 | `padding` | `int` | `60` | Pixel padding around the entire canvas. |
+| `icon_size` | `int` | `64` | Base icon size in pixels. Useful for diagrams that benefit from larger or smaller icons. |
+| `scale` | `int` | `1` | Uniform scale multiplier. Multiplies all pixel dimensions (cell size, padding, icon size, label height, line widths, font sizes) to produce a higher-resolution output. For example, `scale=2` doubles the output dimensions while keeping the diagram visually identical -- ideal for PDF embedding or retina displays. |
 | `outformat` | `str \| list[str]` | `"png"` | Output format(s). Supported: `"png"`, `"svg"`, `"jpg"`. |
 | `show` | `bool` | `True` | Whether to open the rendered file in the system viewer. |
 | `bg_color` | `str` | `"#FFFFFF"` | Canvas background color (hex). |
+
+### Hi-res example
+
+```python
+with Diagram("Hi-Res", rows=2, cols=2, scale=2, outformat="png", show=False):
+    a = Node("Service A", icon="aws/compute/ec2", row=0, col=0)
+    b = Node("Service B", icon="aws/database/rds", row=1, col=1)
+    a >> b
+```
+
+This produces a PNG that is 2x larger in pixel dimensions, with all icons, text, and lines scaled proportionally -- sharp when embedded in PDFs or displayed on retina screens.
 
 ### `Diagram.from_mermaid(text, *, outformat, show, filename)`
 

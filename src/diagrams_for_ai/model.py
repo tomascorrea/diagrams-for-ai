@@ -58,6 +58,8 @@ class DiagramModel:
     cols: int
     cell_size: int = 180
     padding: int = 60
+    icon_size: int = 64
+    scale: int = 1
     nodes: list[NodeModel] = field(default_factory=list)
     edges: list[EdgeModel] = field(default_factory=list)
     clusters: list[ClusterModel] = field(default_factory=list)
@@ -66,11 +68,11 @@ class DiagramModel:
 
     @property
     def canvas_width(self) -> int:
-        return self.cols * self.cell_size + 2 * self.padding
+        return self.cols * self.cell_size * self.scale + 2 * self.padding * self.scale
 
     @property
     def canvas_height(self) -> int:
-        return self.rows * self.cell_size + 2 * self.padding
+        return self.rows * self.cell_size * self.scale + 2 * self.padding * self.scale
 
     def node_by_id(self, node_id: str) -> Optional[NodeModel]:
         for node in self.nodes:

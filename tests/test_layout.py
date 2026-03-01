@@ -83,3 +83,81 @@ def test_canvas_dimensions():
     )
     assert diagram.canvas_width == 6 * 180 + 2 * 60
     assert diagram.canvas_height == 4 * 180 + 2 * 60
+
+
+# ---------------------------------------------------------------------------
+# scale parameter
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture
+def diagram_2x():
+    return DiagramModel(
+        name="test", filename="test", rows=4, cols=6, cell_size=180, padding=60,
+        scale=2,
+    )
+
+
+def test_canvas_dimensions_scale_2():
+    d = DiagramModel(
+        name="test", filename="test", rows=4, cols=6, cell_size=180, padding=60,
+        scale=2,
+    )
+    assert d.canvas_width == (6 * 180 + 2 * 60) * 2
+    assert d.canvas_height == (4 * 180 + 2 * 60) * 2
+
+
+def test_node_center_scales(origin_node, diagram, diagram_2x):
+    c1 = node_center(origin_node, diagram)
+    c2 = node_center(origin_node, diagram_2x)
+    assert abs(c2.x - c1.x * 2) < 0.01
+    assert abs(c2.y - c1.y * 2) < 0.01
+
+
+def test_icon_rect_scales(origin_node, diagram, diagram_2x):
+    r1 = node_icon_rect(origin_node, diagram)
+    r2 = node_icon_rect(origin_node, diagram_2x)
+    assert r2.width == r1.width * 2
+    assert r2.height == r1.height * 2
+
+
+def test_label_position_scales(origin_node, diagram, diagram_2x):
+    l1 = node_label_position(origin_node, diagram)
+    l2 = node_label_position(origin_node, diagram_2x)
+    assert abs(l2.x - l1.x * 2) < 0.01
+    assert abs(l2.y - l1.y * 2) < 0.01
+
+
+def test_cluster_rect_scales(diagram, diagram_2x):
+    cluster = ClusterModel(id="c1", label="Test", row=0, col=0, width=3, height=2)
+    r1 = cluster_rect(cluster, diagram)
+    r2 = cluster_rect(cluster, diagram_2x)
+    assert abs(r2.width - r1.width * 2) < 0.01
+    assert abs(r2.height - r1.height * 2) < 0.01
+
+
+# ---------------------------------------------------------------------------
+# icon_size parameter
+# ---------------------------------------------------------------------------
+
+
+def test_custom_icon_size():
+    d = DiagramModel(
+        name="test", filename="test", rows=4, cols=6, cell_size=180, padding=60,
+        icon_size=80,
+    )
+    node = NodeModel(id="n1", label="Test", icon="aws/compute/ec2", row=0, col=0)
+    rect = node_icon_rect(node, d)
+    assert rect.width == 80
+    assert rect.height == 80
+
+
+def test_icon_size_and_scale_combine():
+    d = DiagramModel(
+        name="test", filename="test", rows=4, cols=6, cell_size=180, padding=60,
+        icon_size=80, scale=2,
+    )
+    node = NodeModel(id="n1", label="Test", icon="aws/compute/ec2", row=0, col=0)
+    rect = node_icon_rect(node, d)
+    assert rect.width == 160
+    assert rect.height == 160

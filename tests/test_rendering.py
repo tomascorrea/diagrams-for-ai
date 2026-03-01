@@ -62,6 +62,53 @@ def test_generates_both_svg_and_png(output_dir):
     assert os.path.isfile(filepath + ".png")
 
 
+def test_png_scale_doubles_dimensions(output_dir):
+    filepath_1x = os.path.join(output_dir, "scale1")
+    with Diagram("S1", filename=filepath_1x, rows=2, cols=2, outformat="png", show=False):
+        Node("A", icon="aws/compute/ec2", row=0, col=0)
+
+    filepath_2x = os.path.join(output_dir, "scale2")
+    with Diagram("S2", filename=filepath_2x, rows=2, cols=2, scale=2, outformat="png", show=False):
+        Node("A", icon="aws/compute/ec2", row=0, col=0)
+
+    img_1x = Image.open(filepath_1x + ".png")
+    img_2x = Image.open(filepath_2x + ".png")
+    assert img_2x.size[0] == img_1x.size[0] * 2
+    assert img_2x.size[1] == img_1x.size[1] * 2
+
+
+def test_svg_scale_doubles_viewbox(output_dir):
+    filepath_1x = os.path.join(output_dir, "svgscale1")
+    with Diagram("S1", filename=filepath_1x, rows=2, cols=2, outformat="svg", show=False):
+        Node("A", icon="aws/compute/ec2", row=0, col=0)
+
+    filepath_2x = os.path.join(output_dir, "svgscale2")
+    with Diagram("S2", filename=filepath_2x, rows=2, cols=2, scale=2, outformat="svg", show=False):
+        Node("A", icon="aws/compute/ec2", row=0, col=0)
+
+    with open(filepath_1x + ".svg") as f:
+        svg_1x = f.read()
+    with open(filepath_2x + ".svg") as f:
+        svg_2x = f.read()
+
+    import re
+    vb_1x = re.search(r'viewBox="0 0 (\d+) (\d+)"', svg_1x)
+    vb_2x = re.search(r'viewBox="0 0 (\d+) (\d+)"', svg_2x)
+    assert vb_1x and vb_2x
+    assert int(vb_2x.group(1)) == int(vb_1x.group(1)) * 2
+    assert int(vb_2x.group(2)) == int(vb_1x.group(2)) * 2
+
+
+def test_png_custom_icon_size(output_dir):
+    filepath = os.path.join(output_dir, "icon_size")
+    with Diagram("Icon", filename=filepath, rows=2, cols=2, icon_size=80, outformat="png", show=False):
+        Node("A", icon="aws/compute/ec2", row=0, col=0)
+
+    assert os.path.isfile(filepath + ".png")
+    img = Image.open(filepath + ".png")
+    assert img.size[0] > 0
+
+
 def test_all_line_styles_render(output_dir):
     filepath = os.path.join(output_dir, "edges")
     with Diagram("Edges", filename=filepath, rows=3, cols=4, outformat="svg", show=False):

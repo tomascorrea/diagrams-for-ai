@@ -61,6 +61,28 @@ def test_config_annotation():
     assert model.bg_color == "#F0F0F0"
 
 
+def test_config_scale_and_icon_size():
+    model = parse_mermaid(textwrap.dedent("""\
+        %% @config name="Hi-Res" rows=2 cols=2 scale=2 icon_size=80
+        graph TD
+            %% @node A pos=0,0
+            A[Node]
+    """))
+    assert model.scale == 2
+    assert model.icon_size == 80
+
+
+def test_config_defaults_scale_and_icon_size():
+    model = parse_mermaid(textwrap.dedent("""\
+        %% @config name="Default"
+        graph TD
+            %% @node A pos=0,0
+            A[Node]
+    """))
+    assert model.scale == 1
+    assert model.icon_size == 64
+
+
 def test_config_with_filename():
     model = parse_mermaid(textwrap.dedent("""\
         %% @config name="Test" filename=custom_output

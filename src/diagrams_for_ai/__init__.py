@@ -45,6 +45,8 @@ class Diagram:
         cols: int = 6,
         cell_size: int = 180,
         padding: int = 60,
+        icon_size: int = 64,
+        scale: int = 1,
         outformat: Union[str, list[str]] = "png",
         show: bool = True,
         bg_color: str = "#FFFFFF",
@@ -59,6 +61,8 @@ class Diagram:
             cols=cols,
             cell_size=cell_size,
             padding=padding,
+            icon_size=icon_size,
+            scale=scale,
             bg_color=bg_color,
             show=show,
         )

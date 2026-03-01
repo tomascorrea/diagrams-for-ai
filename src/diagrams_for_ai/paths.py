@@ -77,6 +77,8 @@ def compute_path(
     end: Point,
     line_style: LineStyle,
     direction: Direction,
+    *,
+    arrow_size: float = 10.0,
 ) -> ConnectionPath:
     """Compute a connection path between two points."""
     builders = {
@@ -90,7 +92,9 @@ def compute_path(
 
     arrow = None
     if direction in (Direction.FORWARD, Direction.BOTH):
-        arrow = _compute_arrowhead(start, end, control_points, segments, line_style)
+        arrow = _compute_arrowhead(
+            start, end, control_points, segments, line_style, size=arrow_size
+        )
 
     return ConnectionPath(
         start=start,
